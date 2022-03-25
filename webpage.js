@@ -34,7 +34,7 @@ app.set("view engine", ".hbs");
 
 // setup a 'route' to listen on the default url path (http://localhost)
 app.get("/", function(req,res){
-    res.send("Hello World<br /><a href='/about'>Go to the about page</a> " + " " + "<a href='/viewData'>View data</a>");
+    res.send("Basic Page<br /><a href='/about'>Go to the about page</a><br /><a href='/employeeInfo'>View Employees</a><br /><a href='/test'>View Test</a><br /><a href='/default'>View Default Layout</a>");
 });
 
 // setup another route to listen on /about
@@ -42,7 +42,7 @@ app.get("/about", function(req,res){
     res.sendFile(path.join(__dirname, "/views/about.html"));
 });
 
-app.get("/viewData", function(req,res){
+app.get("/employeeInfo", function(req,res){
 
     var someData = [{
         name: "John",
@@ -70,5 +70,40 @@ app.get("/viewData", function(req,res){
 
 });
 
-  // start the server to listen on HTTP_PORT
+app.get("/test", function(req,res){
+
+    var someMoreData = [{
+        name: "test",
+        age: 1,
+        occupation: "test",
+        company: "test"
+    },
+    {
+        name: "test2",
+        age: 2,
+        occupation: "test2",
+        company: "test2"
+    }];
+
+    res.render('viewData', {
+        data: someMoreData,
+        //layout: false // do not use the default Layout (main.hbs)
+    });
+
+});
+
+app.get("/default", function(req,res){
+
+    var someMoreData = [{
+        
+    }];
+
+    res.render('viewData', {
+        data: someMoreData,
+        //layout: false // do not use the default Layout (main.hbs)
+    });
+
+});
+
+// start the server to listen on HTTP_PORT
 app.listen(HTTP_PORT, onHttpStart);
