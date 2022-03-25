@@ -1,74 +1,141 @@
-// setup our requires
-const HTTP_PORT = 8080;
-const express = require("express");
-const exphbs = require("express-handlebars");
-var path = require("path");
+var mongoose = require("mongoose");
+var Schema = mongoose.Schema;
 
-const app = express();
+mongoose.connect("mongodb+srv://dbUser:dbPassword@senecaweb.njfs1.mongodb.net/web322_week8?retryWrites=true&w=majority");
 
-// call this function after the http server starts listening for requests
-function onHttpStart() {
-    console.log("Express http server listening on: " + HTTP_PORT);
-}
 
-// Register handlebars as the rendering engine for views
-app.engine(".hbs", exphbs.engine({ 
-    extname: ".hbs", 
-    defaultLayout: "main",
-    helpers: {
-        strong: function(options){
-            return '<strong>' + options.fn(this) + '</strong>';
-        },
-        list: function(context, options) {
-            var ret = "<ul>";
-            
-            for(var i = 0; i < context.length; i++) {
-                ret = ret + "<li>" + options.fn(context[i]) + "</li>";
-            }
-            
-            return ret + "</ul>";
-        }
+// define the company schema
+var companySchema = new Schema({
+    "companyName": {
+      type: String,
+      unique: true
+    },
+    "address": String,
+    "phone": String,
+    "employeeCount": {
+      "type": Number,
+      "default": 0
+    },
+    "country": String
+  });
+  var Company = mongoose.model("web322_companies", companySchema);
+
+  // create a new company
+var kwikEMart = new Company({
+    companyName: "The Kwik-E-Mart",
+    address: "Springfield",
+    phone: "212-842-4923",
+    employeeCount: 3,
+    country: "U.S.A"
+  });
+  
+  var walmart = new Company({
+    companyName: "Walmart",
+    address: "Phoenix",
+    phone: "382-832-1482",
+    employeeCount: 70,
+    country: "U.S.A"
+  });
+
+  var google = new Company({
+    companyName: "Google",
+    address: "San Antonio",
+    phone: "353-942-4902",
+    employeeCount: 137,
+    country: "U.S.A"
+  });
+  
+  
+  Company.deleteMany({companyName: "The Kwik-E-Mart"})
+    .exec()
+    .then(() => {
+        console.log("removed company");
+    })
+    .catch((err) => {
+        console.log(err);
+  });
+
+  Company.deleteMany({companyName: "Walmart"})
+    .exec()
+    .then(() => {
+        console.log("removed company");
+    })
+    .catch((err) => {
+        console.log(err);
+  });
+
+  Company.deleteMany({companyName: "Google"})
+    .exec()
+    .then(() => {
+        console.log("removed company");
+    })
+    .catch((err) => {
+        console.log(err);
+  });
+  
+  // save the company
+  kwikEMart.save((err) => {
+    if(err) {
+      console.log(`There was an error saving the Kwik-E-Mart company: ${err}`);
+    } else {
+      console.log("The Kwik-E-Mart company was saved to the web322_companies collection");
     }
-}));
-app.set("view engine", ".hbs");
-
-// setup a 'route' to listen on the default url path (http://localhost)
-app.get("/", function(req,res){
-    res.send("Hello World<br /><a href='/about'>Go to the about page</a> " + " " + "<a href='/viewData'>View data</a>");
-});
-
-// setup another route to listen on /about
-app.get("/about", function(req,res){
-    res.sendFile(path.join(__dirname, "/views/about.html"));
-});
-
-app.get("/viewData", function(req,res){
-
-    var someData = [{
-        name: "John",
-        age: 23,
-        occupation: "developer",
-        company: "Scotiabank"
-    },
-    {
-        name: "Sarah",
-        age: 32,
-        occupation: "manager",
-        company: "TD"
-    },
-    {
-        name: "Charles",
-        age: 28,
-        occupation: "programmer",
-        company: "IUK Web Team"
-    }];
-
-    res.render('viewData', {
-        data: someData,
-        //layout: false // do not use the default Layout (main.hbs)
+    Company.find({ companyName: "The Kwik-E-Mart" })
+    .exec()
+    .then((company) => {
+      if(!company) {
+        console.log("No company could be found");
+      } else {
+        console.log(company);
+      }
+      // exit the program after saving
+      process.exit();
+    })
+    .catch((err) => {
+      console.log(`There was an error: ${err}`);
     });
+  });
+  
+  walmart.save((err) => {
+    if(err) {
+      console.log(`There was an error saving Walmart company: ${err}`);
+    } else {
+      console.log("Walmart company was saved to the web322_companies collection");
+    }
+    Company.find({ companyName: "Walmart" })
+    .exec()
+    .then((company) => {
+      if(!company) {
+        console.log("No company could be found");
+      } else {
+        console.log(company);
+      }
+      // exit the program after saving
+      process.exit();
+    })
+    .catch((err) => {
+      console.log(`There was an error: ${err}`);
+    });
+  });
 
-});
-
-// start the server to listen on HTTP_PORT
-app.listen(HTTP_PORT, onHttpStart);
+  google.save((err) => {
+    if(err) {
+      console.log(`There was an error saving Google company: ${err}`);
+    } else {
+      console.log("Google company was saved to the web322_companies collection");
+    }
+    Company.find({ companyName: "Google" })
+    .exec()
+    .then((company) => {
+      if(!company) {
+        console.log("No company could be found");
+      } else {
+        console.log(company);
+      }
+      // exit the program after saving
+      process.exit();
+    })
+    .catch((err) => {
+      console.log(`There was an error: ${err}`);
+    });
+  });
